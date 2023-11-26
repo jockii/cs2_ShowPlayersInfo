@@ -21,5 +21,10 @@ The config will be generated in the plugin directory.
 !players
 !showplayersinfo_reload (for config)
 ```
+#### `To do list`
+- [ ] Admin verification through the admin flag
+- [ ] Maybe add more info
+- [ ] Silenecer command
+- [ ] Show Admins on server
 #### `Developers`
 ![Static Badge](https://img.shields.io/badge/Author-jackson_tougher-orange)
