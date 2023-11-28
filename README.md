@@ -1,7 +1,7 @@
-![Static Badge](https://img.shields.io/badge/Plugin-v1.2.0-darkgreen)
+![Static Badge](https://img.shields.io/badge/pre-v1.3.0-yellow)
 ![Static Badge](https://img.shields.io/badge/API-v65%2B-blue)
 
-![in_team](https://github.com/jackson-tougher/cs2_ShowPlayersInfo/assets/119735356/a53d9098-dbbe-4fd7-878a-dc22df234bc1)
+![123131231231313](https://github.com/jackson-tougher/cs2_ShowPlayersInfo/assets/119735356/aaa36428-637b-4cde-99be-51470979ead2)
 
 ### `About`
 Show info about players in game chat(UserID, Name, SteamID64)
