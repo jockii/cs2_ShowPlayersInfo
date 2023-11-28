@@ -3,79 +3,55 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
+using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Utils;
-using System.Text.Json;
 
 namespace ShowPlayersInfo;
-public class Config
-{
-    public List<ulong> admins { get; set; } = new List<ulong>();
-}
 
 [MinimumApiVersion(65)]
 public class ShowPlayersInfo : BasePlugin
 {
     public override string ModuleName => "ShowPlayersInfo";
 
-    public override string ModuleVersion => "v1.0.0";
+    public override string ModuleVersion => "v1.1.0";
 
-    public override string ModuleAuthor => "jackson tougher";
-    public Config config = new Config();
+    public override string ModuleAuthor => "jockii (ch1nazes)";
     public override void Load(bool hotReload)
     {
-        var configPath = Path.Join(ModuleDirectory, "Config.json");
-        if (!File.Exists(configPath))
-        {
-            config.admins.Add(76561199414091272);
-            File.WriteAllText(configPath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }));
-        }
-        else config = JsonSerializer.Deserialize<Config>(File.ReadAllText(configPath));
-    }
-    public void OnConfigReload()
-    {
-        var configPath = Path.Join(ModuleDirectory, "Config.json");
-        config = JsonSerializer.Deserialize<Config>(File.ReadAllText(configPath));
+        
     }
     public void SeparatePlayersInfo(List<CCSPlayerController> playersList)
     {
         int? UserID;
         string? UserName;
         ulong? UserSteamID;
+        string? Role;
 
         playersList.ForEach(player =>
         {
-            if (player.IsValid && !player.IsHLTV)
+            if (player.IsValid && !player.IsHLTV && !player.IsBot)
             {
                 UserID = player.UserId;
                 UserName = player.PlayerName;
                 UserSteamID = player.SteamID;
+                if (AdminManager.PlayerHasPermissions(player, "@css/generic"))
+                    Role = $" {ChatColors.Red}Admin{ChatColors.Grey}";
+                else
+                    Role = $" {ChatColors.Olive}Player{ChatColors.Grey}";
 
                 player.PrintToChat($" {ChatColors.Grey}============= Players Info =============");
-                player.PrintToChat($" {ChatColors.Grey} < {UserID} > || {UserName} || {UserSteamID} ||");
+                player.PrintToChat($" {ChatColors.Grey}{Role} || < {UserID} > || {UserName} || {UserSteamID}");
                 player.PrintToChat($" {ChatColors.Grey}====================================");
             }
-
         });
     }
     [ConsoleCommand("css_players")]
     public void OnCommandPlayers(CCSPlayerController? controller, CommandInfo command)
     {
         if (controller == null) return;
-        if (config.admins.Exists(adminID => adminID == controller.SteamID))
+        if (AdminManager.PlayerHasPermissions(controller, "@css/generic"))
             SeparatePlayersInfo(Utilities.GetPlayers());
         else
-            controller.PrintToChat($" {ChatColors.Red}You are not Admin!!!");
-    }
-    [ConsoleCommand("css_showplayersinfo_reload")]
-    public void OnBotikiConfigReload(CCSPlayerController? controller, CommandInfo command)
-    {
-        if (controller == null) return;
-        if (config.admins.Exists(adminID => adminID == controller.SteamID))
-        {
-            OnConfigReload();
-            controller.PrintToChat($" {ChatColors.Olive}Configuration was reloaded. {ChatColors.Green}OK!");
-        }
-        else
-            controller.PrintToChat($" {ChatColors.Red}You are not Admin!!!");
+            controller.PrintToChat($" {ChatColors.Red}You do not have permission for this command");
     }
 }
