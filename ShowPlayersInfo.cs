@@ -5,6 +5,8 @@ using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Utils;
+using CounterStrikeSharp.API.Modules.Entities;
+using System.Numerics;
 
 namespace ShowPlayersInfo;
 
@@ -22,26 +24,64 @@ public class ShowPlayersInfo : BasePlugin
     }
     public void SeparatePlayersInfo(List<CCSPlayerController> playersList)
     {
-        int? UserID;
-        string? UserName;
-        ulong? UserSteamID;
-        string? Role;
+        string? UserID = "";
+        string? UserName = "";
+        string? UserRole = "";
+        string? UserID2 = "";
+        string? UserID3 = "";
+        string? UserID64 = "";
 
         playersList.ForEach(player =>
         {
             if (player.IsValid && !player.IsHLTV && !player.IsBot)
             {
-                UserID = player.UserId;
-                UserName = player.PlayerName;
-                UserSteamID = player.SteamID;
-                if (AdminManager.PlayerHasPermissions(player, "@css/generic"))
-                    Role = $" {ChatColors.Red}Admin{ChatColors.Grey}";
-                else
-                    Role = $" {ChatColors.Olive}Player{ChatColors.Grey}";
+                SteamID id = new SteamID(player.SteamID);
 
-                player.PrintToChat($" {ChatColors.Grey}============= Players Info =============");
-                player.PrintToChat($" {ChatColors.Grey}{Role} || < {UserID} > || {UserName} || {UserSteamID}");
-                player.PrintToChat($" {ChatColors.Grey}====================================");
+                if (player.TeamNum == 2)
+                {
+                    if (AdminManager.PlayerHasPermissions(player, "@css/generic"))
+                        UserRole = $" {ChatColors.Purple}Admin";
+                    else
+                        UserRole = $" {ChatColors.Yellow}Player(CT)";
+
+                    UserID = $" {ChatColors.Yellow}{player.UserId}";
+                    UserID2 = $" {ChatColors.Yellow}{id.SteamId2}";
+                    UserID3 = $" {ChatColors.Yellow}{id.SteamId3}";
+                    UserID64 = $" {ChatColors.Yellow}{id.SteamId64}";
+                    UserName = $" {ChatColors.Yellow}{player.PlayerName}";
+                }
+                else if (player.TeamNum == 3)
+                {
+                    if (AdminManager.PlayerHasPermissions(player, "@css/generic"))
+                        UserRole = $" {ChatColors.Purple}Admin";
+                    else
+                        UserRole = $" {ChatColors.Blue}Player(T)";
+
+                    UserID = $" {ChatColors.Blue}{player.UserId}";
+                    UserID2 = $" {ChatColors.Blue}{id.SteamId2}";
+                    UserID3 = $" {ChatColors.Blue}{id.SteamId3}";
+                    UserID64 = $" {ChatColors.Blue}{id.SteamId64}";
+                    UserName = $" {ChatColors.Blue}{player.PlayerName}";
+                }
+                else if (player.TeamNum == 1)
+                {
+                    if (AdminManager.PlayerHasPermissions(player, "@css/generic"))
+                        UserRole = $" {ChatColors.Purple}Admin";
+                    else
+                        UserRole = $" {ChatColors.White}Spectator";
+
+                    UserID = $" {ChatColors.White}{player.UserId}";
+                    UserID2 = $" {ChatColors.White}{id.SteamId2}";
+                    UserID3 = $" {ChatColors.White}{id.SteamId3}";
+                    UserID64 = $" {ChatColors.White}{id.SteamId64}";
+                    UserName = $" {ChatColors.White}{player.PlayerName}";
+                }
+                    
+                player.PrintToChat($" {ChatColors.Grey}Status: {UserRole} {ChatColors.Grey}|| UserID: < {ChatColors.Green}{UserID} {ChatColors.Grey}> || Nickname: {ChatColors.Lime}{UserName}");
+                player.PrintToChat($" {ChatColors.Grey}STEAM_ID: {UserID2}");
+                player.PrintToChat($" {ChatColors.Grey}STEAM_ID3: {UserID3}");
+                player.PrintToChat($" {ChatColors.Grey}STEAM_ID64: {UserID64}");
+                player.PrintToChat($" {ChatColors.Grey}=======================================================");
             }
         });
     }
@@ -50,7 +90,11 @@ public class ShowPlayersInfo : BasePlugin
     {
         if (controller == null) return;
         if (AdminManager.PlayerHasPermissions(controller, "@css/generic"))
+        {
+            controller.PrintToChat($" {ChatColors.Grey}====================== Players Info =======================");
             SeparatePlayersInfo(Utilities.GetPlayers());
+        }
+           
         else
             controller.PrintToChat($" {ChatColors.Red}You do not have permission for this command");
     }
