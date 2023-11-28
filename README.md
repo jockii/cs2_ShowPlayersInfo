@@ -1,4 +1,4 @@
-![Static Badge](https://img.shields.io/badge/Plugin-v1.1.0-darkgreen)
+![Static Badge](https://img.shields.io/badge/Plugin-v1.2.0-darkgreen)
 ![Static Badge](https://img.shields.io/badge/API-v65%2B-blue)
 
 ![in_team](https://github.com/jackson-tougher/cs2_ShowPlayersInfo/assets/119735356/a53d9098-dbbe-4fd7-878a-dc22df234bc1)
